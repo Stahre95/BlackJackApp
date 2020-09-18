@@ -6,4 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".GameActivity"
     android:background="@drawable/blackjack_table_bg"
-/>
+>
+
+    <Button
+        android:id="@+id/buttonHit"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
+        android:onClick="playerHit"
+        android:text="@string/buttonHit"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonPass"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/buttonPass"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
+        android:onClick="playerPass"
+        android:text="@string/buttonPass"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
