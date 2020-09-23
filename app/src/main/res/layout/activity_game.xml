@@ -123,7 +123,6 @@
             android:id="@+id/buttonHit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="playerHit"
             android:text="@string/buttonHit"
             android:textSize="25dp" />
 
@@ -131,7 +130,6 @@
             android:id="@+id/buttonPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="playerPass"
             android:text="@string/buttonPass"
             android:textSize="25dp" />
 
@@ -143,11 +141,22 @@
         android:layout_height="wrap_content"
         android:text="@string/buttonStart"
         android:textSize="20dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/playerScore"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dealerScore"
-        android:visibility="invisible"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/winner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:text=""
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dealerScore" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
