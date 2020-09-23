@@ -5,6 +5,7 @@ import java.lang.Exception
 
 class Deck {
 
+    //found this solution on the internet.
     fun deckIds(context: Context): MutableList<Int>{
         val res = mutableListOf<Int>()
         val fields = R.drawable::class.java.declaredFields

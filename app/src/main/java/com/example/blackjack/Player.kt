@@ -9,7 +9,7 @@ class Player {
         return playerScore
     }
 
-    fun addCard(a: String){
-        Hand.add(a)
+    fun addCard(card: String){
+        Hand.add(card)
     }
 }
