@@ -19,12 +19,11 @@
     />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/startGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
         android:background="@android:color/transparent"
-        android:onClick="newGameButton"
         android:text="@string/buttonStart"
         android:textColor="#FFFFFF"
         android:textSize="35dp"
