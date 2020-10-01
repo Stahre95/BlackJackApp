@@ -32,7 +32,7 @@ class GameActivity : AppCompatActivity() {
 
         dealerCards = mutableListOf(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5)
         playerCards = mutableListOf(playerCard1, playerCard2, playerCard3, playerCard4, playerCard5)
-        var card = deck.cards()
+        var card = Deck.cards()
 
         //start of game
         //deals first 3 cards
@@ -64,30 +64,67 @@ class GameActivity : AppCompatActivity() {
         buttonHit.setOnClickListener{
           //adds a card to player hand
             Log.d("!!!", "Added card to player!")
+            player.addCard(card)
+            val cardValue = findCardValue(card)
+            playerScore.text = "Score: " + player.scoreTotal(cardValue)
+            playerCardID(card)
             if (player.scoreTotal(0) > 21){
                 playerScore.text = "Busted!"
-                gameOver()
+
+            }else if (player.scoreTotal(0) == 21){
+                while(dealer.scoreTotal(0) < 17){
+                    //add cards to dealer
+                    dealer.addCard(card)
+                    val cardValue = findCardValue(card)
+                    dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
+                    dealerCardID(card)
+                    dealerIndex++
+                }
+                declareWinner()
+            }
+            index++
+            //if player has 5 cards, move on to dealer
+            if (index == 4){
+                while(dealer.scoreTotal(0) < 17){
+                    //adds a card to dealer
+                    dealer.addCard(card)
+                    val cardValue = findCardValue(card)
+                    dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
+                    dealerCardID(card)
+                    dealerIndex++
+                }
+                declareWinner()
+
             }
         }
 
         //onClick function for when player presses pass
         buttonPass.setOnClickListener{
             Log.d("!!!", "Player Passes")
-
-            //Dealer "hits" if score is below 17
+            hideButtons()
+            //Dealer "hits" if score is below 17 and is not at 5 cards
             while(dealer.scoreTotal(0) < 17){
-              //adds a card to dealer
-
+                //adds a card to dealer
+                dealer.addCard(card)
+                val cardValue = findCardValue(card)
+                dealerScore.text = "Score: " + dealer.scoreTotal(cardValue)
+                dealerCardID(card)
+                dealerIndex++
             }
             declareWinner()
-            gameOver()
+
+
 
         }
 
+        newGame.setOnClickListener{
+            restartGame()
+        }
+
+
     }
     //game is over, start new game? not working currently.
-    fun gameOver() {
-        finish()
+    /*fun gameOver(context: Context) {
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setTitle("$winner").setMessage("Do you want to start a new game?")
         dialogBuilder.setPositiveButton("Yes", { dialog, which ->
@@ -96,7 +133,7 @@ class GameActivity : AppCompatActivity() {
         dialogBuilder.setNegativeButton("Cancel", { dialog, which ->
             backToMain()
         })
-    }
+    }*/
 
     //sets player cards
     fun playerCardID(a: String){
@@ -291,11 +328,18 @@ class GameActivity : AppCompatActivity() {
         else if(dealer.scoreTotal(0) == 21) winner.text ="DEALER WIN!"
         else if(player.scoreTotal(0) < 21 && player.scoreTotal(0) > dealer.scoreTotal(0)) winner.text ="YOU WIN!"
         else if(dealer.scoreTotal(0) < 21 && dealer.scoreTotal(0) < player.scoreTotal(0)) winner.text ="DEALER WIN!"
-        else if(dealer.scoreTotal(0) == 21 && player.scoreTotal(0) == 21) winner.text ="YOU WIN!"
+
         else if(dealer.scoreTotal(0) == player.scoreTotal(0)) winner.text = "PUSH!"
         else if(player.scoreTotal(0) > 21) winner.text ="DEALER WIN!"
         else if(dealer.scoreTotal(0) > 21) winner.text = "YOU WIN!"
+        newGame()
 
+    }
+
+    //new game
+    fun newGame(){
+        newGame.visibility = View.VISIBLE
+        newGame.isClickable = true
     }
 
 
@@ -311,4 +355,9 @@ class GameActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+
+    fun hideButtons(){
+        buttons.visibility = View.INVISIBLE
+        buttons.isClickable = false
+    }
 }

@@ -4,7 +4,7 @@ import android.widget.ImageView
 import kotlin.random.Random
 
 
-object deck{
+object Deck{
 
     fun cards(): String {
         var card = Random.nextInt(1,52)

@@ -2,7 +2,7 @@ package com.example.blackjack
 
 class Player {
     var playerScore = 0
-    var Hand = mutableListOf<String>()
+    var hand = mutableListOf<String>()
 
     fun scoreTotal(card: Int): Int{
         playerScore = playerScore + card
@@ -10,6 +10,10 @@ class Player {
     }
 
     fun addCard(card: String){
-        Hand.add(card)
+        hand.add(card)
+    }
+
+    fun removeCard(card: String){
+        hand.removeAt(0)
     }
 }
