@@ -21,8 +21,9 @@ class GameActivity : AppCompatActivity() {
     var player = Player()
     var index = 0
     var dealerIndex = 0
+    var deckList = Deck()
+    lateinit var currentCard : String
 
-    //lateinit var deckList: MutableList<Int>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +33,7 @@ class GameActivity : AppCompatActivity() {
 
         dealerCards = mutableListOf(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5)
         playerCards = mutableListOf(playerCard1, playerCard2, playerCard3, playerCard4, playerCard5)
-        var card = Deck.cards()
+
 
         //start of game
         //deals first 3 cards
@@ -41,21 +42,35 @@ class GameActivity : AppCompatActivity() {
 
             if (i % 2 == 0){
                 //adds a card to player hand
-                Log.d("!!!", "Added card to player")
-                player.addCard(card)
-                val cardValue = findCardValue(card)
+                Log.d(log, "Added card to player")
+                getCard()
+                player.addCard(currentCard)
+                val cardValue = findCardValue(currentCard)
                 playerScore.text = "Score: " + player.scoreTotal(cardValue)
-                playerCardID(card)
+                playerCardID(currentCard)
                 index++
             }
             else{
                //adds a card to dealers hand
-                Log.d("!!!", "Added card to dealer")
-                dealer.addCard(card)
-                val cardValue = findCardValue(card)
+                Log.d(log, "Added card to dealer")
+                getCard()
+                dealer.addCard(currentCard)
+                val cardValue = findCardValue(currentCard)
                 dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
-                dealerCardID(card)
+                dealerCardID(currentCard)
                 dealerIndex++
+            }
+
+            if (player.scoreTotal(0) == 21){
+                while (dealer.scoreTotal(0) < 17){
+                    getCard()
+                    dealer.addCard(currentCard)
+                    val cardValue = findCardValue(currentCard)
+                    dealerScore.text = "Score: " + dealer.scoreTotal(cardValue)
+                    dealerCardID(currentCard)
+                    dealerIndex++
+                }
+                declareWinner()
             }
 
         }
@@ -63,52 +78,54 @@ class GameActivity : AppCompatActivity() {
         //onClick function for when player presses Hit
         buttonHit.setOnClickListener{
           //adds a card to player hand
-            Log.d("!!!", "Added card to player!")
-            player.addCard(card)
-            val cardValue = findCardValue(card)
+            Log.d(log, "Added card to player!")
+            getCard()
+            player.addCard(currentCard)
+            val cardValue = findCardValue(currentCard)
             playerScore.text = "Score: " + player.scoreTotal(cardValue)
-            playerCardID(card)
+            playerCardID(currentCard)
             if (player.scoreTotal(0) > 21){
-                playerScore.text = "Busted!"
-
-            }else if (player.scoreTotal(0) == 21){
+                declareWinner()
+            }   else if (player.scoreTotal(0) == 21){
                 while(dealer.scoreTotal(0) < 17){
                     //add cards to dealer
-                    dealer.addCard(card)
-                    val cardValue = findCardValue(card)
+                    getCard()
+                    dealer.addCard(currentCard)
+                    val cardValue = findCardValue(currentCard)
                     dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
-                    dealerCardID(card)
+                    dealerCardID(currentCard)
                     dealerIndex++
                 }
                 declareWinner()
             }
             index++
-            //if player has 5 cards, move on to dealer
+            /*//if player has 5 cards, move on to dealer
             if (index == 4){
                 while(dealer.scoreTotal(0) < 17){
                     //adds a card to dealer
-                    dealer.addCard(card)
-                    val cardValue = findCardValue(card)
+                    getCard()
+                    dealer.addCard(currentCard)
+                    val cardValue = findCardValue(currentCard)
                     dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
-                    dealerCardID(card)
+                    dealerCardID(currentCard)
                     dealerIndex++
                 }
                 declareWinner()
-
-            }
+            }*/
         }
 
         //onClick function for when player presses pass
         buttonPass.setOnClickListener{
-            Log.d("!!!", "Player Passes")
+            Log.d(log, "Player Passes")
             hideButtons()
             //Dealer "hits" if score is below 17 and is not at 5 cards
             while(dealer.scoreTotal(0) < 17){
                 //adds a card to dealer
-                dealer.addCard(card)
-                val cardValue = findCardValue(card)
+                getCard()
+                dealer.addCard(currentCard)
+                val cardValue = findCardValue(currentCard)
                 dealerScore.text = "Score: " + dealer.scoreTotal(cardValue)
-                dealerCardID(card)
+                dealerCardID(currentCard)
                 dealerIndex++
             }
             declareWinner()
@@ -135,188 +152,201 @@ class GameActivity : AppCompatActivity() {
         })
     }*/
 
+
+    //get card
+    fun getCard(){
+        currentCard = deckList.getNewCard()
+    }
     //sets player cards
     fun playerCardID(a: String){
         when(a){
-            //hearts
-            "two of hearts" -> return playerCards[index].setImageResource(R.drawable.two_of_hearts)
-            "three of hearts" -> return playerCards[index].setImageResource(R.drawable.three_of_hearts)
-            "four of hearts" -> return playerCards[index].setImageResource(R.drawable.four_of_hearts)
-            "five of hearts" -> return playerCards[index].setImageResource(R.drawable.five_of_hearts)
-            "six of hearts" -> return playerCards[index].setImageResource(R.drawable.six_of_hearts)
-            "seven of hearts" -> return playerCards[index].setImageResource(R.drawable.seven_of_hearts)
-            "eight of hearts" -> return playerCards[index].setImageResource(R.drawable.eight_of_hearts)
-            "nine of hearts" -> return playerCards[index].setImageResource(R.drawable.nine_of_hearts)
-            "ten of hearts" -> return playerCards[index].setImageResource(R.drawable.ten_of_hearts)
-            "jack of hearts" -> return playerCards[index].setImageResource(R.drawable.jack_of_hearts)
-            "queen of hearts" -> return playerCards[index].setImageResource(R.drawable.queen_of_hearts)
-            "king of hearts" -> return playerCards[index].setImageResource(R.drawable.king_of_hearts)
-            "ace of hearts" -> return playerCards[index].setImageResource(R.drawable.ace_of_hearts)
-            //spades
-            "two of spades" -> return playerCards[index].setImageResource(R.drawable.two_of_spades)
-            "three of spades" -> return playerCards[index].setImageResource(R.drawable.three_of_spades)
-            "four of spades" -> return playerCards[index].setImageResource(R.drawable.four_of_spades)
-            "five of spades" -> return playerCards[index].setImageResource(R.drawable.five_of_spades)
-            "six of spades" -> return playerCards[index].setImageResource(R.drawable.six_of_spades)
-            "seven of spades" -> return playerCards[index].setImageResource(R.drawable.seven_of_spades)
-            "eight of spades" -> return playerCards[index].setImageResource(R.drawable.eight_of_spades)
-            "nine of spades" -> return playerCards[index].setImageResource(R.drawable.nine_of_spades)
-            "ten of spades" -> return playerCards[index].setImageResource(R.drawable.ten_of_spades)
-            "jack of spades" -> return playerCards[index].setImageResource(R.drawable.jack_of_spades)
-            "queen of spades" -> return playerCards[index].setImageResource(R.drawable.queen_of_spades)
-            "king of spades" -> return playerCards[index].setImageResource(R.drawable.king_of_spades)
-            "ace of spades" -> return playerCards[index].setImageResource(R.drawable.ace_of_spades)
-            //diamonds
-            "two of diamonds" -> return playerCards[index].setImageResource(R.drawable.two_of_diamonds)
-            "three of diamonds" -> return playerCards[index].setImageResource(R.drawable.three_of_diamonds)
-            "four of diamonds" -> return playerCards[index].setImageResource(R.drawable.four_of_diamonds)
-            "five of diamonds" -> return playerCards[index].setImageResource(R.drawable.five_of_diamonds)
-            "six of diamonds" -> return playerCards[index].setImageResource(R.drawable.six_of_diamonds)
-            "seven of diamonds" -> return playerCards[index].setImageResource(R.drawable.seven_of_diamonds)
-            "eight of diamonds" -> return playerCards[index].setImageResource(R.drawable.eight_of_diamonds)
-            "nine of diamonds" -> return playerCards[index].setImageResource(R.drawable.nine_of_diamonds)
-            "ten of diamonds" -> return playerCards[index].setImageResource(R.drawable.ten_of_diamonds)
-            "jack of diamonds" -> return playerCards[index].setImageResource(R.drawable.jack_of_diamonds2)
-            "queen of diamonds" -> return playerCards[index].setImageResource(R.drawable.queen_of_diamonds)
-            "king of diamonds" -> return playerCards[index].setImageResource(R.drawable.king_of_diamonds)
-            "ace of diamonds" -> return playerCards[index].setImageResource(R.drawable.ace_of_diamonds)
             //clubs
-            "two of clubs" -> return playerCards[index].setImageResource(R.drawable.two_of_clubs)
-            "three of clubs" -> return playerCards[index].setImageResource(R.drawable.three_of_clubs)
-            "four of clubs" -> return playerCards[index].setImageResource(R.drawable.four_of_clubs)
-            "five of clubs" -> return playerCards[index].setImageResource(R.drawable.five_of_clubs)
-            "six of clubs" -> return playerCards[index].setImageResource(R.drawable.six_of_clubs)
-            "seven of clubs" -> return playerCards[index].setImageResource(R.drawable.seven_of_clubs)
-            "eight of clubs" -> return playerCards[index].setImageResource(R.drawable.eight_of_clubs)
-            "nine of clubs" -> return playerCards[index].setImageResource(R.drawable.nine_of_clubs)
-            "ten of clubs" -> return playerCards[index].setImageResource(R.drawable.ten_of_clubs)
-            "jack of clubs" -> return playerCards[index].setImageResource(R.drawable.jack_of_clubs)
-            "queen of clubs" -> return playerCards[index].setImageResource(R.drawable.queen_of_clubs)
-            "king of clubs" -> return playerCards[index].setImageResource(R.drawable.king_of_clubs)
-            "ace of clubs" -> return playerCards[index].setImageResource(R.drawable.ace_of_clubs)
+            "Two of Clubs" -> return playerCards[index].setImageResource(R.drawable.two_of_clubs)
+            "Three of Clubs" -> return playerCards[index].setImageResource(R.drawable.three_of_clubs)
+            "Four of Clubs" -> return playerCards[index].setImageResource(R.drawable.four_of_clubs)
+            "Five of Clubs" -> return playerCards[index].setImageResource(R.drawable.five_of_clubs)
+            "Six of Clubs" -> return playerCards[index].setImageResource(R.drawable.six_of_clubs)
+            "Seven of Clubs" -> return playerCards[index].setImageResource(R.drawable.seven_of_clubs)
+            "Eight of Clubs" -> return playerCards[index].setImageResource(R.drawable.eight_of_clubs)
+            "Nine of Clubs" -> return playerCards[index].setImageResource(R.drawable.nine_of_clubs)
+            "Ten of Clubs" -> return playerCards[index].setImageResource(R.drawable.ten_of_clubs)
+            "Jack of Clubs" -> return playerCards[index].setImageResource(R.drawable.jack_of_clubs)
+            "Queen of Clubs" -> return playerCards[index].setImageResource(R.drawable.queen_of_clubs)
+            "King of Clubs" -> return playerCards[index].setImageResource(R.drawable.king_of_clubs)
+            "Ace of Clubs" -> return playerCards[index].setImageResource(R.drawable.ace_of_clubs)
+            //diamonds
+            "Two of Diamonds" -> return playerCards[index].setImageResource(R.drawable.two_of_diamonds)
+            "Three of Diamonds" -> return playerCards[index].setImageResource(R.drawable.three_of_diamonds)
+            "Four of Diamonds" -> return playerCards[index].setImageResource(R.drawable.four_of_diamonds)
+            "Five of Diamonds" -> return playerCards[index].setImageResource(R.drawable.five_of_diamonds)
+            "Six of Diamonds" -> return playerCards[index].setImageResource(R.drawable.six_of_diamonds)
+            "Seven of Diamonds" -> return playerCards[index].setImageResource(R.drawable.seven_of_diamonds)
+            "Eight of Diamonds" -> return playerCards[index].setImageResource(R.drawable.eight_of_diamonds)
+            "Nine of Diamonds" -> return playerCards[index].setImageResource(R.drawable.nine_of_diamonds)
+            "Ten of Diamonds" -> return playerCards[index].setImageResource(R.drawable.ten_of_diamonds)
+            "Jack of Diamonds" -> return playerCards[index].setImageResource(R.drawable.jack_of_diamonds2)
+            "Queen of Diamonds" -> return playerCards[index].setImageResource(R.drawable.queen_of_diamonds)
+            "King of Diamonds" -> return playerCards[index].setImageResource(R.drawable.king_of_diamonds)
+            "Ace of Diamonds" -> return playerCards[index].setImageResource(R.drawable.ace_of_diamonds)
+            //spades
+            "Two of Spades" -> return playerCards[index].setImageResource(R.drawable.two_of_spades)
+            "Three of Spades" -> return playerCards[index].setImageResource(R.drawable.three_of_spades)
+            "Four of Spades" -> return playerCards[index].setImageResource(R.drawable.four_of_spades)
+            "Five of Spades" -> return playerCards[index].setImageResource(R.drawable.five_of_spades)
+            "Six of Spades" -> return playerCards[index].setImageResource(R.drawable.six_of_spades)
+            "Seven of Spades" -> return playerCards[index].setImageResource(R.drawable.seven_of_spades)
+            "Eight of Spades" -> return playerCards[index].setImageResource(R.drawable.eight_of_spades)
+            "Nine of Spades" -> return playerCards[index].setImageResource(R.drawable.nine_of_spades)
+            "Ten of Spades" -> return playerCards[index].setImageResource(R.drawable.ten_of_spades)
+            "Jack of Spades" -> return playerCards[index].setImageResource(R.drawable.jack_of_spades)
+            "Queen of Spades" -> return playerCards[index].setImageResource(R.drawable.queen_of_spades)
+            "King of Spades" -> return playerCards[index].setImageResource(R.drawable.king_of_spades)
+            "Ace of Spades" -> return playerCards[index].setImageResource(R.drawable.ace_of_spades)
+            //hearts
+            "Two of Hearts" -> return playerCards[index].setImageResource(R.drawable.two_of_hearts)
+            "Three of Hearts" -> return playerCards[index].setImageResource(R.drawable.three_of_hearts)
+            "Four of Hearts" -> return playerCards[index].setImageResource(R.drawable.four_of_hearts)
+            "Five of Hearts" -> return playerCards[index].setImageResource(R.drawable.five_of_hearts)
+            "Six of Hearts" -> return playerCards[index].setImageResource(R.drawable.six_of_hearts)
+            "Seven of Hearts" -> return playerCards[index].setImageResource(R.drawable.seven_of_hearts)
+            "Eight of Hearts" -> return playerCards[index].setImageResource(R.drawable.eight_of_hearts)
+            "Nine of Hearts" -> return playerCards[index].setImageResource(R.drawable.nine_of_hearts)
+            "Ten of Hearts" -> return playerCards[index].setImageResource(R.drawable.ten_of_hearts)
+            "Jack of Hearts" -> return playerCards[index].setImageResource(R.drawable.jack_of_hearts)
+            "Queen of Hearts" -> return playerCards[index].setImageResource(R.drawable.queen_of_hearts)
+            "King of Hearts" -> return playerCards[index].setImageResource(R.drawable.king_of_hearts)
+            "Ace of Hearts" -> return playerCards[index].setImageResource(R.drawable.ace_of_hearts)
+
+
+
         }
 
     } //sets player cards
     fun dealerCardID(a: String){
         when(a){
-            //hearts
-            "two of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.two_of_hearts)
-            "three of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.three_of_hearts)
-            "four of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.four_of_hearts)
-            "five of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.five_of_hearts)
-            "six of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.six_of_hearts)
-            "seven of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.seven_of_hearts)
-            "eight of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.eight_of_hearts)
-            "nine of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.nine_of_hearts)
-            "ten of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ten_of_hearts)
-            "jack of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.jack_of_hearts)
-            "queen of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.queen_of_hearts)
-            "king of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.king_of_hearts)
-            "ace of hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ace_of_hearts)
-            //spades
-            "two of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.two_of_spades)
-            "three of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.three_of_spades)
-            "four of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.four_of_spades)
-            "five of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.five_of_spades)
-            "six of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.six_of_spades)
-            "seven of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.seven_of_spades)
-            "eight of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.eight_of_spades)
-            "nine of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.nine_of_spades)
-            "ten of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ten_of_spades)
-            "jack of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.jack_of_spades)
-            "queen of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.queen_of_spades)
-            "king of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.king_of_spades)
-            "ace of spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ace_of_spades)
-            //diamonds
-            "two of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.two_of_diamonds)
-            "three of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.three_of_diamonds)
-            "four of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.four_of_diamonds)
-            "five of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.five_of_diamonds)
-            "six of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.six_of_diamonds)
-            "seven of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.seven_of_diamonds)
-            "eight of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.eight_of_diamonds)
-            "nine of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.nine_of_diamonds)
-            "ten of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ten_of_diamonds)
-            "jack of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.jack_of_diamonds2)
-            "queen of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.queen_of_diamonds)
-            "king of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.king_of_diamonds)
-            "ace of diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ace_of_diamonds)
             //clubs
-            "two of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.two_of_clubs)
-            "three of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.three_of_clubs)
-            "four of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.four_of_clubs)
-            "five of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.five_of_clubs)
-            "six of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.six_of_clubs)
-            "seven of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.seven_of_clubs)
-            "eight of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.eight_of_clubs)
-            "nine of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.nine_of_clubs)
-            "ten of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ten_of_clubs)
-            "jack of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.jack_of_clubs)
-            "queen of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.queen_of_clubs)
-            "king of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.king_of_clubs)
-            "ace of clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ace_of_clubs)
+            "Two of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.two_of_clubs)
+            "Three of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.three_of_clubs)
+            "Four of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.four_of_clubs)
+            "Five of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.five_of_clubs)
+            "Six of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.six_of_clubs)
+            "Seven of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.seven_of_clubs)
+            "Eight of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.eight_of_clubs)
+            "Nine of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.nine_of_clubs)
+            "Ten of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ten_of_clubs)
+            "Jack of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.jack_of_clubs)
+            "Queen of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.queen_of_clubs)
+            "King of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.king_of_clubs)
+            "Ace of Clubs" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ace_of_clubs)
+            //diamonds
+            "Two of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.two_of_diamonds)
+            "Three of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.three_of_diamonds)
+            "Four of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.four_of_diamonds)
+            "Five of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.five_of_diamonds)
+            "Six of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.six_of_diamonds)
+            "Seven of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.seven_of_diamonds)
+            "Eight of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.eight_of_diamonds)
+            "Nine of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.nine_of_diamonds)
+            "Ten of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ten_of_diamonds)
+            "Jack of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.jack_of_diamonds2)
+            "Queen of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.queen_of_diamonds)
+            "King of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.king_of_diamonds)
+            "Ace of Diamonds" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ace_of_diamonds)
+            //spades
+            "Two of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.two_of_spades)
+            "Three of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.three_of_spades)
+            "Four of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.four_of_spades)
+            "Five of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.five_of_spades)
+            "Six of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.six_of_spades)
+            "Seven of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.seven_of_spades)
+            "Eight of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.eight_of_spades)
+            "Nine of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.nine_of_spades)
+            "Ten of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ten_of_spades)
+            "Jack of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.jack_of_spades)
+            "Queen of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.queen_of_spades)
+            "King of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.king_of_spades)
+            "Ace of Spades" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ace_of_spades)
+            //hearts
+            "Two of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.two_of_hearts)
+            "Three of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.three_of_hearts)
+            "Four of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.four_of_hearts)
+            "Five of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.five_of_hearts)
+            "Six of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.six_of_hearts)
+            "Seven of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.seven_of_hearts)
+            "Eight of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.eight_of_hearts)
+            "Nine of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.nine_of_hearts)
+            "Ten of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ten_of_hearts)
+            "Jack of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.jack_of_hearts)
+            "Queen of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.queen_of_hearts)
+            "King of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.king_of_hearts)
+            "Ace of Hearts" -> return dealerCards[dealerIndex].setImageResource(R.drawable.ace_of_hearts)
+
+
+
         }
 
     }
 
     //finds value of card
     fun findCardValue(a: String): Int{
-
         when(a){
-            //hearts
-            "two of hearts" -> return 2
-            "tree of hearts" -> return 3
-            "four of hearts" -> return 4
-            "five of hearts" -> return 5
-            "six of hearts" -> return 6
-            "seven of hearts" -> return 7
-            "eight of hearts" -> return 8
-            "nine of hearts" -> return 9
-            "ten of hearts" -> return 10
-            "jack of Hearts" -> return 10
-            "queen of hearts" -> return 10
-            "king of hearts" -> return 10
-            "ace of hearts" -> return 11
-            //spades
-            "two of spades" -> return 2
-            "tree of spades" -> return 3
-            "four of spades" -> return 4
-            "five of spades" -> return 5
-            "six of spades*" -> return 7
-            "eight of spades" -> return 8
-            "nine of spades" -> return 9
-            "ten of spades" -> return 10
-            "jack of spades" -> return 10
-            "queen of spades" -> return 10
-            "king of spades" -> return 10
-            "ace of spades" -> return 11
-            //diamonds
-            "two of diamonds" -> return 2
-            "three of diamonds" -> return 3
-            "four of diamonds" -> return 4
-            "five of diamonds" -> return 5
-            "six of diamonds" -> return 6
-            "seven of diamonds" -> return 7
-            "eight of diamonds" -> return 8
-            "nine of diamonds" -> return 9
-            "ten of diamonds" -> return 10
-            "jack of diamonds" -> return 10
-            "queen of diamonds" -> return 10
-            "king of diamonds" -> return 10
-            "ace of diamonds" -> return 11
             //clubs
-            "two of clubs" -> return 2
-            "three of clubs" -> return 3
-            "four of clubs" -> return 4
-            "five of clubs" -> return 5
-            "six of clubs" -> return 7
-            "eight of clubs" -> return 8
-            "nine of clubs" -> return 9
-            "ten of clubs" -> return 10
-            "jack of clubs" -> return 10
-            "queen of clubs" -> return 10
-            "king of clubs" -> return 10
-            "ace of clubs" -> return 11
+            "Two of Clubs" -> return 2
+            "Three of Clubs" -> return 3
+            "Four of Clubs" -> return 4
+            "Five of Clubs" -> return 5
+            "Six of Clubs" -> return 6
+            "Seven of Clubs" -> return 7
+            "Eight of Clubs" -> return 8
+            "Nine of Clubs" -> return 9
+            "Ten of Clubs" -> return 10
+            "Jack of Clubs" -> return 10
+            "Queen of Clubs" -> return 10
+            "King of Clubs" -> return 10
+            "Ace of Clubs" -> return 11
+            //diamonds
+            "Two of Diamonds" -> return 2
+            "Three of Diamonds" -> return 3
+            "Four of Diamonds" -> return 4
+            "Five of Diamonds" -> return 5
+            "Six of Diamonds" -> return 6
+            "Seven of Diamonds" -> return 7
+            "Eight of Diamonds" -> return 8
+            "Nine of Diamonds" -> return 9
+            "Ten of Diamonds" -> return 10
+            "Jack of Diamonds" -> return 10
+            "Queen of Diamonds" -> return 10
+            "King of Diamonds" -> return 10
+            "Ace of Diamonds" -> return 11
+            //spades
+            "Two of Spades" -> return 2
+            "Tree of Spades" -> return 3
+            "Four of Spades" -> return 4
+            "Five of Spades" -> return 5
+            "Six of Spades" -> return 6
+            "Seven of Spades" ->  return 7
+            "Eight of Spades" -> return 8
+            "Nine of Spades" -> return 9
+            "Ten of Spades" -> return 10
+            "Jack of Spades" -> return 10
+            "Queen of Spades" -> return 10
+            "King of Spades" -> return 10
+            "Ace of Spades" -> return 11
+            //hearts
+            "Two of Hearts" -> return 2
+            "Three of Hearts" -> return 3
+            "Four of Hearts" -> return 4
+            "Five of Hearts" -> return 5
+            "Six of Hearts" -> return 6
+            "Seven of Hearts" -> return 7
+            "Eight of Hearts" -> return 8
+            "Nine of Hearts" -> return 9
+            "Ten of Hearts" -> return 10
+            "Jack of Hearts" -> return 10
+            "Queen of Hearts" -> return 10
+            "King of Hearts" -> return 10
+            "Ace of Hearts" -> return 11
+
         }
 
 
@@ -324,14 +354,13 @@ class GameActivity : AppCompatActivity() {
     }
     //function to declare winner
    fun declareWinner(){
-        if(player.scoreTotal(0) == 21) winner.text= "YOU WIN!"
-        else if(dealer.scoreTotal(0) == 21) winner.text ="DEALER WIN!"
-        else if(player.scoreTotal(0) < 21 && player.scoreTotal(0) > dealer.scoreTotal(0)) winner.text ="YOU WIN!"
-        else if(dealer.scoreTotal(0) < 21 && dealer.scoreTotal(0) < player.scoreTotal(0)) winner.text ="DEALER WIN!"
-
+        if(player.scoreTotal(0) == 21 && dealer.scoreTotal(0) != 21) winner.text= "YOU WIN!"
         else if(dealer.scoreTotal(0) == player.scoreTotal(0)) winner.text = "PUSH!"
-        else if(player.scoreTotal(0) > 21) winner.text ="DEALER WIN!"
-        else if(dealer.scoreTotal(0) > 21) winner.text = "YOU WIN!"
+        else if(dealer.scoreTotal(0) == 21) winner.text ="DEALER WIN!"
+        else if(player.scoreTotal(0) > 21) winner.text ="BUSTED! DEALER WIN!"
+        else if(dealer.scoreTotal(0) > 21) winner.text = "DEALER BUSTED! YOU WIN!"
+        else if(player.scoreTotal(0) < 21 && player.scoreTotal(0) > dealer.scoreTotal(0)) winner.text ="YOU WIN!"
+        else if(dealer.scoreTotal(0) < 21 && dealer.scoreTotal(0) > player.scoreTotal(0)) winner.text ="DEALER WIN!"
         newGame()
 
     }

@@ -139,24 +139,27 @@
         android:id="@+id/winner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
+        android:layout_marginBottom="20dp"
         android:text=""
         android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/playerScore"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dealerScore" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/newGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:clickable="false"
         android:text="new game"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/playerScore"
+        app:layout_constraintBottom_toTopOf="@+id/winner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dealerScore"
         tools:visibility="invisible" />
 
 

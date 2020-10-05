@@ -1,5 +1,8 @@
 //To do List
 
-1. fix so not every card is the same
-2. change value of Ace when score is above 21
+1. fix so not every card is the same - DONE
+2. fix so IF player bust, end round and declare winner - DONE
 3. add pop up window(new game) after game is over.
+4. Add "split" && "double" button and functions
+5. Change value of Ace when score is above 21
+6. Add currency && betting functions pre game
