@@ -22,6 +22,7 @@ class GameActivity : AppCompatActivity() {
     var index = 0
     var dealerIndex = 0
     var deckList = Deck()
+    lateinit var winner : String
     lateinit var currentCard : String
 
 
@@ -60,8 +61,10 @@ class GameActivity : AppCompatActivity() {
                 dealerCardID(currentCard)
                 dealerIndex++
             }
-
-            if (player.scoreTotal(0) == 21){
+            if(player.scoreTotal(0) > 21){
+                declareWinner()
+            }
+            /*if (player.scoreTotal(0) == 21){
                 while (dealer.scoreTotal(0) < 17){
                     getCard()
                     dealer.addCard(currentCard)
@@ -71,8 +74,8 @@ class GameActivity : AppCompatActivity() {
                     dealerIndex++
                 }
                 declareWinner()
-            }
 
+            }*/
         }
 
         //onClick function for when player presses Hit
@@ -97,9 +100,10 @@ class GameActivity : AppCompatActivity() {
                     dealerIndex++
                 }
                 declareWinner()
+
+
             }
-            index++
-            /*//if player has 5 cards, move on to dealer
+            //if player has 5 cards, move on to dealer
             if (index == 4){
                 while(dealer.scoreTotal(0) < 17){
                     //adds a card to dealer
@@ -111,7 +115,10 @@ class GameActivity : AppCompatActivity() {
                     dealerIndex++
                 }
                 declareWinner()
-            }*/
+
+            }
+            index++
+
         }
 
         //onClick function for when player presses pass
@@ -132,6 +139,7 @@ class GameActivity : AppCompatActivity() {
 
 
 
+
         }
 
         newGame.setOnClickListener{
@@ -141,16 +149,19 @@ class GameActivity : AppCompatActivity() {
 
     }
     //game is over, start new game? not working currently.
-    /*fun gameOver(context: Context) {
+    fun gameOver(context: Context) {
         val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setTitle("$winner").setMessage("Do you want to start a new game?")
-        dialogBuilder.setPositiveButton("Yes", { dialog, which ->
+        dialogBuilder.setTitle("${winner}").setMessage("Do you want to start a new game?")
+        dialogBuilder.setPositiveButton("New Game", { dialog, which ->
             restartGame()
         })
-        dialogBuilder.setNegativeButton("Cancel", { dialog, which ->
+        dialogBuilder.setNegativeButton("Return to Menu", { dialog, which ->
             backToMain()
         })
-    }*/
+
+        val alert = dialogBuilder.create()
+        alert.show()
+    }
 
 
     //get card
@@ -320,7 +331,7 @@ class GameActivity : AppCompatActivity() {
             "Ace of Diamonds" -> return 11
             //spades
             "Two of Spades" -> return 2
-            "Tree of Spades" -> return 3
+            "Three of Spades" -> return 3
             "Four of Spades" -> return 4
             "Five of Spades" -> return 5
             "Six of Spades" -> return 6
@@ -354,14 +365,15 @@ class GameActivity : AppCompatActivity() {
     }
     //function to declare winner
    fun declareWinner(){
-        if(player.scoreTotal(0) == 21 && dealer.scoreTotal(0) != 21) winner.text= "YOU WIN!"
-        else if(dealer.scoreTotal(0) == player.scoreTotal(0)) winner.text = "PUSH!"
-        else if(dealer.scoreTotal(0) == 21) winner.text ="DEALER WIN!"
-        else if(player.scoreTotal(0) > 21) winner.text ="BUSTED! DEALER WIN!"
-        else if(dealer.scoreTotal(0) > 21) winner.text = "DEALER BUSTED! YOU WIN!"
-        else if(player.scoreTotal(0) < 21 && player.scoreTotal(0) > dealer.scoreTotal(0)) winner.text ="YOU WIN!"
-        else if(dealer.scoreTotal(0) < 21 && dealer.scoreTotal(0) > player.scoreTotal(0)) winner.text ="DEALER WIN!"
-        newGame()
+        if(player.scoreTotal(0) == 21 && dealer.scoreTotal(0) != 21) winner = "YOU WIN!"
+        else if(dealer.scoreTotal(0) == player.scoreTotal(0)) winner  = "PUSH!"
+        else if(dealer.scoreTotal(0) == 21) winner ="DEALER WIN!"
+        else if(player.scoreTotal(0) > 21) winner ="BUSTED! DEALER WIN!"
+        else if(dealer.scoreTotal(0) > 21) winner = "DEALER BUSTED! YOU WIN!"
+        else if(player.scoreTotal(0) < 21 && player.scoreTotal(0) > dealer.scoreTotal(0)) winner ="YOU WIN!"
+        else if(dealer.scoreTotal(0) < 21 && dealer.scoreTotal(0) > player.scoreTotal(0)) winner ="DEALER WIN!"
+        gameOver(this)
+        //newGame()
 
     }
 

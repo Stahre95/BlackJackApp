@@ -81,7 +81,7 @@ class Deck(){
         }
         val rnd = (0 until deck.size).random()
         val name = deck[rnd].name
-
+        deck.removeAt(rnd)
         return name
 
     }

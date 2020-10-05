@@ -48,13 +48,13 @@
         android:id="@+id/dealerScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/dealer"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:padding="20dp"
-        android:textSize="30dp"
+        android:padding="0dp"
+        android:text="Score: 0"
         android:textColor="#000000"
-        android:text="Score: 0"/>
+        android:textSize="30dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dealer" />
 
     <!-- Player -->
 
@@ -100,7 +100,7 @@
         android:id="@+id/playerScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="20dp"
+        android:padding="0dp"
         android:text="Score: 0"
         android:textColor="#000000"
         android:textSize="30dp"
