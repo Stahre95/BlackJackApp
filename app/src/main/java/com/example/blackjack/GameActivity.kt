@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_game.*
 import kotlin.random.Random
 
 class GameActivity : AppCompatActivity() {
-    val log ="!!!"
+    //val log ="!!!"
     var dealerCards = mutableListOf<ImageView>()
     var playerCards = mutableListOf<ImageView>()
     var dealer = Player()
@@ -22,8 +22,10 @@ class GameActivity : AppCompatActivity() {
     var index = 0
     var dealerIndex = 0
     var deckList = Deck()
+    var ace = 0
     lateinit var winner : String
     lateinit var currentCard : String
+
 
 
 
@@ -41,81 +43,44 @@ class GameActivity : AppCompatActivity() {
         for (i in 0 until 3) {
 
 
-            if (i % 2 == 0){
+            if (i % 2 == 0) {
                 //adds a card to player hand
-                Log.d(log, "Added card to player")
-                getCard()
-                player.addCard(currentCard)
-                val cardValue = findCardValue(currentCard)
-                playerScore.text = "Score: " + player.scoreTotal(cardValue)
-                playerCardID(currentCard)
+                playerHit()
                 index++
-            }
-            else{
-               //adds a card to dealers hand
-                Log.d(log, "Added card to dealer")
-                getCard()
-                dealer.addCard(currentCard)
-                val cardValue = findCardValue(currentCard)
-                dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
-                dealerCardID(currentCard)
+            } else {
+                //adds a card to dealers hand
+                dealerHit()
                 dealerIndex++
             }
-            if(player.scoreTotal(0) > 21){
+            if (player.scoreTotal(0) > 21) {
                 declareWinner()
             }
-            /*if (player.scoreTotal(0) == 21){
-                while (dealer.scoreTotal(0) < 17){
-                    getCard()
-                    dealer.addCard(currentCard)
-                    val cardValue = findCardValue(currentCard)
-                    dealerScore.text = "Score: " + dealer.scoreTotal(cardValue)
-                    dealerCardID(currentCard)
-                    dealerIndex++
-                }
-                declareWinner()
-
-            }*/
+        }
+        if (player.scoreTotal(0) > 21){
+            declareWinner()
         }
 
         //onClick function for when player presses Hit
         buttonHit.setOnClickListener{
           //adds a card to player hand
-            Log.d(log, "Added card to player!")
-            getCard()
-            player.addCard(currentCard)
-            val cardValue = findCardValue(currentCard)
-            playerScore.text = "Score: " + player.scoreTotal(cardValue)
-            playerCardID(currentCard)
+          playerHit()
             if (player.scoreTotal(0) > 21){
                 declareWinner()
             }   else if (player.scoreTotal(0) == 21){
                 while(dealer.scoreTotal(0) < 17){
-                    //add cards to dealer
-                    getCard()
-                    dealer.addCard(currentCard)
-                    val cardValue = findCardValue(currentCard)
-                    dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
-                    dealerCardID(currentCard)
+                    dealerHit()
                     dealerIndex++
                 }
                 declareWinner()
-
-
             }
             //if player has 5 cards, move on to dealer
             if (index == 4){
                 while(dealer.scoreTotal(0) < 17){
                     //adds a card to dealer
-                    getCard()
-                    dealer.addCard(currentCard)
-                    val cardValue = findCardValue(currentCard)
-                    dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
-                    dealerCardID(currentCard)
+                    dealerHit()
                     dealerIndex++
                 }
                 declareWinner()
-
             }
             index++
 
@@ -123,32 +88,18 @@ class GameActivity : AppCompatActivity() {
 
         //onClick function for when player presses pass
         buttonPass.setOnClickListener{
-            Log.d(log, "Player Passes")
             hideButtons()
             //Dealer "hits" if score is below 17 and is not at 5 cards
             while(dealer.scoreTotal(0) < 17){
                 //adds a card to dealer
-                getCard()
-                dealer.addCard(currentCard)
-                val cardValue = findCardValue(currentCard)
-                dealerScore.text = "Score: " + dealer.scoreTotal(cardValue)
-                dealerCardID(currentCard)
+                dealerHit()
                 dealerIndex++
             }
             declareWinner()
-
-
-
-
         }
-
-        newGame.setOnClickListener{
-            restartGame()
-        }
-
 
     }
-    //game is over, start new game? not working currently.
+    //game is over, start new game?
     fun gameOver(context: Context) {
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setTitle("${winner}").setMessage("Do you want to start a new game?")
@@ -163,10 +114,34 @@ class GameActivity : AppCompatActivity() {
         alert.show()
     }
 
+    fun playerHit(){
+        getCard()
+        player.addCard(currentCard)
+        val cardValue = findCardValue(currentCard)
+        playerScore.text = "Score: " + player.scoreTotal(cardValue)
+        playerCardID(currentCard)
+
+        if (player.scoreTotal(0) > 21 && ace > 0){
+            playerScore.text = "score: " + player.scoreTotal(0 -10)
+            ace--
+        }
+    }
+    fun dealerHit(){
+        getCard()
+        dealer.addCard(currentCard)
+        val cardValue = findCardValue(currentCard)
+        dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
+        dealerCardID(currentCard)
+    }
+
 
     //get card
     fun getCard(){
         currentCard = deckList.getNewCard()
+
+        if (currentCard == "Ace of Spades" || currentCard == "Ace of Diamonds" || currentCard == "Ace of Hearts" || currentCard == "Ace of Clubs"){
+            ace++
+        }
     }
     //sets player cards
     fun playerCardID(a: String){
@@ -227,9 +202,6 @@ class GameActivity : AppCompatActivity() {
             "Queen of Hearts" -> return playerCards[index].setImageResource(R.drawable.queen_of_hearts)
             "King of Hearts" -> return playerCards[index].setImageResource(R.drawable.king_of_hearts)
             "Ace of Hearts" -> return playerCards[index].setImageResource(R.drawable.ace_of_hearts)
-
-
-
         }
 
     } //sets player cards
@@ -375,12 +347,6 @@ class GameActivity : AppCompatActivity() {
         gameOver(this)
         //newGame()
 
-    }
-
-    //new game
-    fun newGame(){
-        newGame.visibility = View.VISIBLE
-        newGame.isClickable = true
     }
 
 

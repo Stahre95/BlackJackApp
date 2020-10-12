@@ -120,6 +120,15 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
+            android:id="@+id/buttonSplit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/buttonSplit"
+            android:visibility="gone"
+            android:clickable="false"
+            android:textSize="25dp" />
+
+        <Button
             android:id="@+id/buttonHit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

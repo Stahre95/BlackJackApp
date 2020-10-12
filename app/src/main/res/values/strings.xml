@@ -2,6 +2,7 @@
     <string name="app_name">BlackJack</string>
     <string name="buttonStart">New Game</string>
     <string name="buttonHit">Hit</string>
+    <string name="buttonSplit">Split</string>
     <string name="buttonPass">Pass</string>
     <string name="PlayerWin">PLAYER WIN!</string>
     <string name="DealerWin">DEALER WIN!</string>
