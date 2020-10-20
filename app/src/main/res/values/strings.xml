@@ -3,7 +3,11 @@
     <string name="buttonStart">New Game</string>
     <string name="buttonHit">Hit</string>
     <string name="buttonSplit">Split</string>
+    <string name="buttonDouble">Double</string>
     <string name="buttonPass">Pass</string>
+    <string name="buttonBet">Bet</string>
     <string name="PlayerWin">PLAYER WIN!</string>
     <string name="DealerWin">DEALER WIN!</string>
+    <string name="buttonDeal">Deal Hand</string>
+    <string name="placeYourBet">Place your bet</string>
 </resources>

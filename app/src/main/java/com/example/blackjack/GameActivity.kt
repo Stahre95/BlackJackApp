@@ -4,14 +4,15 @@ package com.example.blackjack
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_game.*
-import kotlin.random.Random
+
 
 class GameActivity : AppCompatActivity() {
     //val log ="!!!"
@@ -23,82 +24,135 @@ class GameActivity : AppCompatActivity() {
     var dealerIndex = 0
     var deckList = Deck()
     var ace = 0
-    lateinit var winner : String
-    lateinit var currentCard : String
-
-
+    lateinit var winner: String
+    lateinit var currentCard: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
-
         dealerCards = mutableListOf(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5)
         playerCards = mutableListOf(playerCard1, playerCard2, playerCard3, playerCard4, playerCard5)
 
+        //initilize()
+        //playerBet()
 
-        //start of game
+        //Card phase
         //deals first 3 cards
-        for (i in 0 until 3) {
+        hideBet()
+        showDeal()
+        Deal.setOnClickListener {
+            showButtons()
+            hideDeal()
+            for (i in 0 until 3) {
 
 
-            if (i % 2 == 0) {
-                //adds a card to player hand
-                playerHit()
-                index++
-            } else {
-                //adds a card to dealers hand
-                dealerHit()
-                dealerIndex++
-            }
-            if (player.scoreTotal(0) > 21) {
-                declareWinner()
-            }
-        }
-        if (player.scoreTotal(0) > 21){
-            declareWinner()
-        }
-
-        //onClick function for when player presses Hit
-        buttonHit.setOnClickListener{
-          //adds a card to player hand
-          playerHit()
-            if (player.scoreTotal(0) > 21){
-                declareWinner()
-            }   else if (player.scoreTotal(0) == 21){
-                while(dealer.scoreTotal(0) < 17){
+                if (i % 2 == 0) {
+                    //adds a card to player hand
+                    playerHit()
+                    index++
+                } else {
+                    //adds a card to dealers hand
                     dealerHit()
                     dealerIndex++
                 }
-                declareWinner()
+                if (player.scoreTotal(0) == 21) {
+                    declareWinner()
+                }
             }
-            //if player has 5 cards, move on to dealer
-            if (index == 4){
-                while(dealer.scoreTotal(0) < 17){
+
+
+            //onClick function for when player presses Hit
+            buttonHit.setOnClickListener {
+                //adds a card to player hand
+                playerHit()
+                if (player.scoreTotal(0) > 21) {
+                    declareWinner()
+                } else if (player.scoreTotal(0) == 21) {
+                    while (dealer.scoreTotal(0) < 17) {
+                        dealerHit()
+                        dealerIndex++
+                    }
+                    declareWinner()
+                }
+                //if player has 5 cards, move on to dealer
+                if (index == 4) {
+                    while (dealer.scoreTotal(0) < 17) {
+                        //adds a card to dealer
+                        dealerHit()
+                        dealerIndex++
+                    }
+                    declareWinner()
+                }
+                index++
+
+            }
+
+            //onClick function for when player presses pass
+            buttonPass.setOnClickListener {
+                hideButtons()
+                //Dealer "hits" if score is below 17 and is not at 5 cards
+                while (dealer.scoreTotal(0) < 17) {
                     //adds a card to dealer
                     dealerHit()
                     dealerIndex++
                 }
                 declareWinner()
             }
-            index++
-
         }
-
-        //onClick function for when player presses pass
-        buttonPass.setOnClickListener{
+            //onClick function for when player presses Double
+        buttonDouble.setOnClickListener{
             hideButtons()
-            //Dealer "hits" if score is below 17 and is not at 5 cards
-            while(dealer.scoreTotal(0) < 17){
-                //adds a card to dealer
+            //Gives player 1 extra card
+            for (i in 0..0){
+                playerHit()
+            }
+            while (dealer.scoreTotal(0) < 17) {
                 dealerHit()
                 dealerIndex++
             }
             declareWinner()
         }
-
     }
+    /*Work in progress
+
+
+    fun initilize(){
+
+        if (player.playerMoney == 0)
+        player.playerMoney = 1000
+        betTextView.text = "Current money: ${player.playerMoney.toString()}"
+    }
+
+
+    fun playerBet(){
+        var betInput = findViewById<EditText>(R.id.bet)
+        var bet = betInput.toString()
+        var betAsNumber: Int = bet.toInt()
+
+
+
+        buttonBet.setOnClickListener {
+               //player.playerMoney = player.playerMoney - betAsNumber
+               //betTextView.text = "Current bet: ${betInput.toString()}"
+               showDeal()
+               hideBet()
+           else {
+               val dialogBuilder = AlertDialog.Builder(this)
+               dialogBuilder.setTitle("Wrong bet!").setMessage("Your bet needs to be greater than 5 and lower than 500")
+               dialogBuilder.setPositiveButton("Try again!", {dialog, which ->
+                   restartGame()
+               })
+               dialogBuilder.setNegativeButton("Return to menu", {dialog, which ->
+                   backToMain()
+               })
+
+               val alert = dialogBuilder.create()
+               alert.show()
+           }
+        }
+    }*/
     //game is over, start new game?
     fun gameOver(context: Context) {
         val dialogBuilder = AlertDialog.Builder(this)
@@ -363,8 +417,26 @@ class GameActivity : AppCompatActivity() {
     }
 
 
+    fun showButtons() {
+        buttons.visibility = View.VISIBLE
+        buttons.isClickable = true
+    }
+
     fun hideButtons(){
         buttons.visibility = View.INVISIBLE
         buttons.isClickable = false
+    }
+    fun hideBet(){
+        betting.visibility = View.INVISIBLE
+    }
+
+    fun showDeal(){
+        Deal.visibility = View.VISIBLE
+        Deal.isClickable = true
+    }
+
+    fun hideDeal(){
+        Deal.visibility = View.INVISIBLE
+        Deal.isClickable = false
     }
 }
