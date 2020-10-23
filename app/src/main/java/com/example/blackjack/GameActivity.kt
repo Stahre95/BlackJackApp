@@ -4,13 +4,14 @@ package com.example.blackjack
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
+import android.view.Window
+import android.view.WindowManager
 import android.widget.ImageView
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_game.*
 
 
@@ -30,8 +31,12 @@ class GameActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // remove title
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_game)
-
+        supportActionBar?.hide()
         dealerCards = mutableListOf(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5)
         playerCards = mutableListOf(playerCard1, playerCard2, playerCard3, playerCard4, playerCard5)
 
@@ -176,7 +181,7 @@ class GameActivity : AppCompatActivity() {
         playerCardID(currentCard)
 
         if (player.scoreTotal(0) > 21 && ace > 0){
-            playerScore.text = "score: " + player.scoreTotal(0 -10)
+            playerScore.text = "score: " + player.scoreTotal(0 - 10)
             ace--
         }
     }
@@ -361,7 +366,7 @@ class GameActivity : AppCompatActivity() {
             "Four of Spades" -> return 4
             "Five of Spades" -> return 5
             "Six of Spades" -> return 6
-            "Seven of Spades" ->  return 7
+            "Seven of Spades" -> return 7
             "Eight of Spades" -> return 8
             "Nine of Spades" -> return 9
             "Ten of Spades" -> return 10

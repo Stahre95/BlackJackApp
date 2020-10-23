@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/blackjack_table_bg"
-    tools:context=".GameActivity">
+    tools:context=".GameActivity"
+    >
+
     <!--  Dealer  -->
     <!--<LinearLayout
         android:id="@+id/dealer"
