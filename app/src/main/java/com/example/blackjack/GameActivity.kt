@@ -40,7 +40,7 @@ class GameActivity : AppCompatActivity() {
 
         //Card phase
         //deals first 3 cards
-        hideBet()
+        //hideBet()
         showDeal()
         Deal.setOnClickListener {
             showButtons()
@@ -391,7 +391,8 @@ class GameActivity : AppCompatActivity() {
     }
     //function to declare winner
    fun declareWinner(){
-        if(player.scoreTotal(0) == 21 && dealer.scoreTotal(0) != 21) winner = "YOU WIN!"
+        if (player.scoreTotal(0) == 21 && index == 1) winner = "YOU GOT BLACKJACK!"
+        else if(player.scoreTotal(0) == 21 && dealer.scoreTotal(0) != 21) winner = "YOU WIN!"
         else if(dealer.scoreTotal(0) == player.scoreTotal(0)) winner  = "PUSH!"
         else if(dealer.scoreTotal(0) == 21) winner ="DEALER WIN!"
         else if(player.scoreTotal(0) > 21) winner ="BUSTED! DEALER WIN!"
@@ -426,9 +427,9 @@ class GameActivity : AppCompatActivity() {
         buttons.visibility = View.INVISIBLE
         buttons.isClickable = false
     }
-    fun hideBet(){
+    /*fun hideBet(){
         betting.visibility = View.INVISIBLE
-    }
+    }*/
 
     fun showDeal(){
         Deal.visibility = View.VISIBLE
