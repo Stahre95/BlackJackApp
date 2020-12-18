@@ -10,10 +10,20 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.room.Room
 import kotlinx.android.synthetic.main.activity_game.*
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
-class GameActivity : AppCompatActivity() {
+class GameActivity : AppCompatActivity() , CoroutineScope {
+    //Database things
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+    get() = Dispatchers.Main + job
+    private lateinit var db: AppDatabase
+
+
     val log ="!!!"
     var dealerCards = mutableListOf<ImageView>()
     var playerCards = mutableListOf<ImageView>()
@@ -21,14 +31,21 @@ class GameActivity : AppCompatActivity() {
     var player = Player()
     var index = 0
     var dealerIndex = 0
-    var deckList = Deck()
-    lateinit var currentCard : String
+    //var deckList = Deck()
+    var deck : Deck? = null
+    var currentCard : String? = null
+    var cardCurrent : String? = null
+
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+        job = Job()
+
+        db = AppDatabase.getInstance(this)
+
 
 
         dealerCards = mutableListOf(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5)
@@ -44,30 +61,35 @@ class GameActivity : AppCompatActivity() {
                 //adds a card to player hand
                 Log.d(log, "Added card to player")
                 getCard()
-                player.addCard(currentCard)
-                val cardValue = findCardValue(currentCard)
-                playerScore.text = "Score: " + player.scoreTotal(cardValue)
-                playerCardID(currentCard)
-                index++
+                if (currentCard != null) {
+                    player.addCard(currentCard!!)
+                    val cardValue = findCardValue(currentCard!!)
+                    playerScore.text = "Score: " + player.scoreTotal(cardValue)
+                    playerCardID(currentCard!!)
+                    index++
+                }
+
             }
             else{
                //adds a card to dealers hand
                 Log.d(log, "Added card to dealer")
                 getCard()
-                dealer.addCard(currentCard)
-                val cardValue = findCardValue(currentCard)
-                dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
-                dealerCardID(currentCard)
-                dealerIndex++
+                if (currentCard != null) {
+                    dealer.addCard(currentCard!!)
+                    val cardValue = findCardValue(currentCard!!)
+                    dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
+                    dealerCardID(currentCard!!)
+                    dealerIndex++
+                }
             }
 
             if (player.scoreTotal(0) == 21){
                 while (dealer.scoreTotal(0) < 17){
                     getCard()
-                    dealer.addCard(currentCard)
-                    val cardValue = findCardValue(currentCard)
+                    dealer.addCard(currentCard!!)
+                    val cardValue = findCardValue(currentCard!!)
                     dealerScore.text = "Score: " + dealer.scoreTotal(cardValue)
-                    dealerCardID(currentCard)
+                    dealerCardID(currentCard!!)
                     dealerIndex++
                 }
                 declareWinner()
@@ -80,25 +102,27 @@ class GameActivity : AppCompatActivity() {
           //adds a card to player hand
             Log.d(log, "Added card to player!")
             getCard()
-            player.addCard(currentCard)
-            val cardValue = findCardValue(currentCard)
-            playerScore.text = "Score: " + player.scoreTotal(cardValue)
-            playerCardID(currentCard)
-            if (player.scoreTotal(0) > 21){
-                declareWinner()
-            }   else if (player.scoreTotal(0) == 21){
-                while(dealer.scoreTotal(0) < 17){
-                    //add cards to dealer
-                    getCard()
-                    dealer.addCard(currentCard)
-                    val cardValue = findCardValue(currentCard)
-                    dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
-                    dealerCardID(currentCard)
-                    dealerIndex++
+            if (currentCard != null) {
+                player.addCard(currentCard!!)
+                val cardValue = findCardValue(currentCard!!)
+                playerScore.text = "Score: " + player.scoreTotal(cardValue)
+                playerCardID(currentCard!!)
+                if (player.scoreTotal(0) > 21) {
+                    declareWinner()
+                } else if (player.scoreTotal(0) == 21) {
+                    while (dealer.scoreTotal(0) < 17) {
+                        //add cards to dealer
+                        getCard()
+                        dealer.addCard(currentCard!!)
+                        val cardValue = findCardValue(currentCard!!)
+                        dealerScore.text = "score: " + dealer.scoreTotal(cardValue)
+                        dealerCardID(currentCard!!)
+                        dealerIndex++
+                    }
+                    declareWinner()
                 }
-                declareWinner()
+                index++
             }
-            index++
             /*//if player has 5 cards, move on to dealer
             if (index == 4){
                 while(dealer.scoreTotal(0) < 17){
@@ -122,11 +146,13 @@ class GameActivity : AppCompatActivity() {
             while(dealer.scoreTotal(0) < 17){
                 //adds a card to dealer
                 getCard()
-                dealer.addCard(currentCard)
-                val cardValue = findCardValue(currentCard)
-                dealerScore.text = "Score: " + dealer.scoreTotal(cardValue)
-                dealerCardID(currentCard)
-                dealerIndex++
+                if (currentCard != null) {
+                    dealer.addCard(currentCard!!)
+                    val cardValue = findCardValue(currentCard!!)
+                    dealerScore.text = "Score: " + dealer.scoreTotal(cardValue)
+                    dealerCardID(currentCard!!)
+                    dealerIndex++
+                }
             }
             declareWinner()
 
@@ -155,8 +181,34 @@ class GameActivity : AppCompatActivity() {
 
     //get card
     fun getCard(){
-        currentCard = deckList.getNewCard()
+        //currentCard = deckList.getNewCard().toString()
+        val cards = async(Dispatchers.IO) {
+            db.cardDao.getAll()
+        }
+
+        launch {
+            val list = cards.await().toMutableList()
+            deck = Deck(list)
+            loadNewCard()
+        }
     }
+
+    fun addNewCard(card: Card){
+        deck?.addCard(card)
+
+        launch(Dispatchers.IO){
+            db.cardDao.insert(card)
+        }
+    }
+
+    fun loadNewCard(){
+        currentCard = deck?.getNewCard()
+
+        if (currentCard == null)
+            return
+
+    }
+
     //sets player cards
     fun playerCardID(a: String){
         when(a){
@@ -375,12 +427,6 @@ class GameActivity : AppCompatActivity() {
     //Restart game
     fun restartGame(){
         finish()
-        startActivity(intent)
-    }
-
-    //back to main activity
-    fun backToMain(){
-        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 
